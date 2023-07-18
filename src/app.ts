@@ -1,9 +1,8 @@
 import express, { Express, Request, Response } from "express";
 import { connect } from "mongoose";
-import User from "./models/user-model";
-import Task from "./models/task-model";
-
-import { encryptPassword, isMatchPassword } from "./secure/password-encrypting";
+import RedisClient from "./redis/redis"
+import cookieParser from "cookie-parser";
+import { router } from "./router/router";
 
 // database envs
 /**
@@ -27,6 +26,10 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
+app.use(express.json());
+app.use(cookieParser());
+app.use("/api", router);
+
 async function run() {
   connect(`mongodb://${DB_ADDRESS}:${DB_PORT}/${DB_NAME}`).catch((error) =>
     console.log(error)
@@ -35,6 +38,10 @@ async function run() {
   app.listen(PORT, () => {
     return console.log(`Server started at http://localhost:${PORT}`);
   });
+
+  await RedisClient.set("key", "test");
+  const value = await RedisClient.get("key");
+  console.log(value);
 }
 
 run();

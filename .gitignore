@@ -1,6 +1,10 @@
 # Database data
 data
 
+# Docker
+Dockerfile
+docker-compose.yml
+
 # Logs
 logs
 *.log
