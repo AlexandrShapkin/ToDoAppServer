@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
 import { connect } from "mongoose";
 import RedisClient from "./redis/redis"
 import cookieParser from "cookie-parser";

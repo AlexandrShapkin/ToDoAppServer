@@ -1,7 +1,19 @@
-import { Express, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as UserService from "../service/user-service";
 
-export async function registration(req: Request, res: Response, next: any) {
+/**
+ * Registration endpoint handler.
+ * @param {Request} req express Request
+ * @param {Response} res express Response
+ * @param {NextFunction} next express NextFunction
+ * @returns {Promise<Response<any, Record<string, any>>>} Response JSON
+ * `{  
+ *    accessToken: string;  
+      refreshToken: string;  
+      userDto: UserDto;  
+    }`
+ */
+export async function registration(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>> {
   const { username, password } = req.body;
 
   const userData = await UserService.registration(username, password);

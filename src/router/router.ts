@@ -1,4 +1,3 @@
-import express, { Express, Request, Response } from "express";
 import { Router } from "express";
 import { registration } from "../controllers/user-controller";
 
