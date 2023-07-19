@@ -2,6 +2,7 @@ import User from "../models/user-model";
 import { encryptPassword } from "../secure/password-encrypting";
 import { generateTokens, saveToken } from "./token-service";
 import { newUserDto, UserDto } from "../dtos/user-dto";
+import { BadRequest } from "../errors/api-error";
 
 export async function registration(
   username: string,
@@ -9,7 +10,7 @@ export async function registration(
 ): Promise<{ accessToken: string; refreshToken: string; userDto: UserDto }> {
   const candidate = await User.findOne({ username: username });
   if (candidate) {
-    throw Error(
+    throw BadRequest(
       `Пользователь с именем пользователя ${username} уже зарегистрирован`
     );
   }

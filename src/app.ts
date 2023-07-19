@@ -3,6 +3,7 @@ import { connect } from "mongoose";
 import RedisClient from "./redis/redis"
 import cookieParser from "cookie-parser";
 import { router } from "./router/router";
+import ErrorMiddleware from "./middlewares/error-middleware";
 
 // database envs
 /**
@@ -29,6 +30,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", router);
+app.use(ErrorMiddleware);
 
 async function run() {
   connect(`mongodb://${DB_ADDRESS}:${DB_PORT}/${DB_NAME}`).catch((error) =>
