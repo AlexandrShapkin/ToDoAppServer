@@ -50,7 +50,7 @@ export function BadRequest(message: string, errors: ValidationError[] = []): Api
     status: 400,
     message: message,
     errors: errors,
-    name: "Bad Reques Error",
+    name: "Bad Request Error",
   };
   return err;
 }

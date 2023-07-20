@@ -1,4 +1,5 @@
-import { Jwt, JwtPayload, sign } from "jsonwebtoken";
+import { JwtPayload, sign } from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
 import RedisClient from "../redis/redis";
 
 const ACCESS_KEY = process.env.JWT_ACCESS_KEY || "secret_key";
@@ -19,6 +20,17 @@ export function generateTokens(payload: JwtPayload): Tokens {
   }
 }
 
+export function decodeToken(token: string): {username: string, id: string, iat: number, exp: number}{
+  const decoded = jwtDecode<{username: string, id: string, iat: number, exp: number}>(token);
+  return decoded;
+}
+
 export async function saveToken(userId: string, refreshToken: string) {
   await RedisClient.set(userId, refreshToken);
+}
+
+export async function removeToken(userId: string): Promise<string> {
+  const token = await RedisClient.get(userId);
+  await RedisClient.del(userId);
+  return token;
 }

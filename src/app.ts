@@ -1,9 +1,9 @@
 import express from "express";
 import { connect } from "mongoose";
-import RedisClient from "./redis/redis"
 import cookieParser from "cookie-parser";
 import { router } from "./router/router";
 import ErrorMiddleware from "./middlewares/error-middleware";
+import { decodeToken } from "./service/token-service";
 
 // database envs
 /**
@@ -40,10 +40,6 @@ async function run() {
   app.listen(PORT, () => {
     return console.log(`Server started at http://localhost:${PORT}`);
   });
-
-  await RedisClient.set("key", "test");
-  const value = await RedisClient.get("key");
-  console.log(value);
 }
 
 run();
