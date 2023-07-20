@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as UserService from "../service/user-service";
+import { validationResult } from "express-validator";
+import { BadRequest } from "../errors/api-error";
 
 /**
  * Registration endpoint handler.
@@ -9,12 +11,17 @@ import * as UserService from "../service/user-service";
  * @returns {Promise<Response<any, Record<string, any>>>} Response JSON
  * `{  
  *    accessToken: string;  
-      refreshToken: string;  
-      userDto: UserDto;  
-    }`
+ *    refreshToken: string;  
+ *    userDto: UserDto;  
+ *  }`
  */
 export async function registration(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>> {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      next(BadRequest("Ошибка валидации", errors.array()));
+    }
+
     const { username, password } = req.body;
 
     const userData = await UserService.registration(username, password);

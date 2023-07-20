@@ -1,3 +1,5 @@
+import { ValidationError } from "express-validator";
+
 /**
  * {
   status: number;
@@ -7,7 +9,7 @@
  */
 export interface ApiError extends Error {
   status: number;
-  errors: Error[];
+  errors: ValidationError[];
 }
 
 /**
@@ -40,10 +42,10 @@ export function UnauthorizedError(): ApiError {
 /**
  * Bad Reques Error
  * @param {string} message - error message
- * @param {Error[]} errors - array of errors
+ * @param {ValidationError[]} errors - array of errors
  * @returns {ApiError}
  */
-export function BadRequest(message: string, errors: Error[] = []): ApiError {
+export function BadRequest(message: string, errors: ValidationError[] = []): ApiError {
   const err: ApiError = {
     status: 400,
     message: message,
