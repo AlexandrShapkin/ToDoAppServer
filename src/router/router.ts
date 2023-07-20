@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registration, login, logout } from "../controllers/user-controller";
+import { registration, login, logout, refresh } from "../controllers/user-controller";
 import { body } from "express-validator";
 
 export const router = Router();
@@ -12,3 +12,4 @@ router.post(
 );
 router.post("/login", login);
 router.post("/logout", logout);
+router.post("/refresh", refresh);

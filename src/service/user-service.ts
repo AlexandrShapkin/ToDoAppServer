@@ -3,9 +3,16 @@ import {
   encryptPassword,
   isMatchPassword,
 } from "../secure/password-encrypting";
-import { decodeToken, generateTokens, removeToken, saveToken } from "./token-service";
+import {
+  decodeToken,
+  generateTokens,
+  removeToken,
+  saveToken,
+  verifyRefreshToken,
+  findToken
+} from "./token-service";
 import { newUserDto, UserDto } from "../dtos/user-dto";
-import { BadRequest } from "../errors/api-error";
+import { BadRequest, UnauthorizedError } from "../errors/api-error";
 
 export async function registration(
   username: string,
@@ -65,4 +72,28 @@ export async function logout(refreshToken: string): Promise<string> {
   const { id } = decodeToken(refreshToken);
   const token = await removeToken(id);
   return token;
+}
+
+export async function refresh(
+  refreshToken: string
+): Promise<{ accessToken: string; refreshToken: string; userDto: UserDto }> {
+  if (!refreshToken) {
+    throw UnauthorizedError();
+  }
+  const userData = verifyRefreshToken(refreshToken);
+  const redisToken = findToken(userData?.id);
+
+  if (!userData || !redisToken) {
+    throw UnauthorizedError();
+  }
+  const user = await User.findById(userData.id);
+  const userDto = newUserDto(user);
+
+  const tokens = generateTokens({ ...userDto });
+  await saveToken(userDto.id, tokens.refreshToken);
+
+  return {
+    ...tokens,
+    userDto,
+  };
 }

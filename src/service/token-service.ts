@@ -1,4 +1,4 @@
-import { JwtPayload, sign } from "jsonwebtoken";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
 import RedisClient from "../redis/redis";
 
@@ -16,12 +16,50 @@ export function generateTokens(payload: JwtPayload): Tokens {
 
   return {
     accessToken: accessToken,
-    refreshToken: refreshToken
+    refreshToken: refreshToken,
+  };
+}
+
+export function verifyAccessToken(token: string): {
+  username: string;
+  id: string;
+  iat: number;
+  exp: number;
+} {
+  try {
+    verify(token, ACCESS_KEY);
+    return decodeToken(token);
+  } catch (err) {
+    return null;
   }
 }
 
-export function decodeToken(token: string): {username: string, id: string, iat: number, exp: number}{
-  const decoded = jwtDecode<{username: string, id: string, iat: number, exp: number}>(token);
+export function verifyRefreshToken(token: string): {
+  username: string;
+  id: string;
+  iat: number;
+  exp: number;
+} {
+  try {
+    verify(token, REFRESH_KEY);
+    return decodeToken(token);
+  } catch (err) {
+    return null;
+  }
+}
+
+export function decodeToken(token: string): {
+  username: string;
+  id: string;
+  iat: number;
+  exp: number;
+} {
+  const decoded = jwtDecode<{
+    username: string;
+    id: string;
+    iat: number;
+    exp: number;
+  }>(token);
   return decoded;
 }
 
@@ -32,5 +70,10 @@ export async function saveToken(userId: string, refreshToken: string) {
 export async function removeToken(userId: string): Promise<string> {
   const token = await RedisClient.get(userId);
   await RedisClient.del(userId);
+  return token;
+}
+
+export async function findToken(userId: string): Promise<string> {
+  const token = await RedisClient.get(userId);
   return token;
 }

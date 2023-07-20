@@ -71,6 +71,24 @@ export async function logout(
     res.clearCookie("refreshToken");
     return res.json(token);
   } catch (err) {
-    next(err); 
+    next(err);
+  }
+}
+
+export async function refresh(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response<any, Record<string, any>>> {
+  try {
+    const {refreshToken} = req.cookies;
+    const userData = await UserService.refresh(refreshToken);
+    res.cookie("refreshToken", userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+    return res.json(userData);
+  } catch (err) {
+    next(err);
   }
 }
