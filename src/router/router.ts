@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { registration, login, logout, refresh } from "../controllers/user-controller";
 import { body } from "express-validator";
+import authMiddleware from "../middlewares/auth-middleware";
 
 export const router = Router();
 
@@ -13,3 +14,6 @@ router.post(
 router.post("/login", login);
 router.post("/logout", logout);
 router.post("/refresh", refresh);
+router.get("/test", authMiddleware, function(req, res, next) {
+  res.json({"test": "test"})
+})

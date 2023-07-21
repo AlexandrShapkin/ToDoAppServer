@@ -10,6 +10,13 @@ export interface Tokens {
   refreshToken: string;
 }
 
+export interface DecodedTokenPayload {
+  username: string;
+  id: string;
+  iat: number;
+  exp: number;
+}
+
 export function generateTokens(payload: JwtPayload): Tokens {
   const accessToken = sign(payload, ACCESS_KEY, { expiresIn: "12h" });
   const refreshToken = sign(payload, REFRESH_KEY, { expiresIn: "30d" });
@@ -20,46 +27,32 @@ export function generateTokens(payload: JwtPayload): Tokens {
   };
 }
 
-export function verifyAccessToken(token: string): {
-  username: string;
-  id: string;
-  iat: number;
-  exp: number;
-} {
+export function verifyAccessToken(token: string): DecodedTokenPayload {
   try {
-    verify(token, ACCESS_KEY);
+    const userData = verify(token, ACCESS_KEY);
+    if (!userData) {
+      return null;
+    }
     return decodeToken(token);
   } catch (err) {
     return null;
   }
 }
 
-export function verifyRefreshToken(token: string): {
-  username: string;
-  id: string;
-  iat: number;
-  exp: number;
-} {
+export function verifyRefreshToken(token: string): DecodedTokenPayload {
   try {
-    verify(token, REFRESH_KEY);
+    const userData = verify(token, REFRESH_KEY);
+    if (!userData) {
+      return null;
+    }
     return decodeToken(token);
   } catch (err) {
     return null;
   }
 }
 
-export function decodeToken(token: string): {
-  username: string;
-  id: string;
-  iat: number;
-  exp: number;
-} {
-  const decoded = jwtDecode<{
-    username: string;
-    id: string;
-    iat: number;
-    exp: number;
-  }>(token);
+export function decodeToken(token: string): DecodedTokenPayload {
+  const decoded = jwtDecode<DecodedTokenPayload>(token);
   return decoded;
 }
 

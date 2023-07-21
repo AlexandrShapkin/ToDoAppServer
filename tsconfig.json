@@ -6,7 +6,8 @@
     "target": "es2022",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "typeRoots": ["./src/types"]
   },
   "lib": ["es2022"]
 }
