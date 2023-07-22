@@ -54,3 +54,13 @@ export function BadRequest(message: string, errors: ValidationError[] = []): Api
   };
   return err;
 }
+
+export function UpdateError(): ApiError {
+  const err: ApiError = {
+    status: 500,
+    message: "Ошибка обноаления задачи",
+    errors: [],
+    name: "Task Update Error"
+  };
+  return err;
+}

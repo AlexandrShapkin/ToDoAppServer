@@ -3,7 +3,6 @@ import { connect } from "mongoose";
 import cookieParser from "cookie-parser";
 import { router } from "./router/router";
 import ErrorMiddleware from "./middlewares/error-middleware";
-import { decodeToken } from "./service/token-service";
 
 // database envs
 /**
@@ -25,7 +24,7 @@ const DB_NAME = process.env.DB_NAME || "ToDoApp";
  */
 const PORT = process.env.PORT || 3000;
 
-const app = express();
+const app: express.Express = express();
 
 app.use(express.json());
 app.use(cookieParser());

@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import * as UserService from "../service/user-service";
-import { validationResult } from "express-validator";
+import { validationResult, Result, ValidationError } from "express-validator";
 import { BadRequest } from "../errors/api-error";
+import { UserDataDto } from "../dtos/user-data-dto";
+import { AccessDataDto } from "../dtos/access-data-dto";
 
 /**
  * Registration endpoint handler.
@@ -21,12 +23,12 @@ export async function registration(
   next: NextFunction
 ): Promise<void | Response<any, Record<string, any>>> {
   try {
-    const errors = validationResult(req);
+    const errors: Result<ValidationError> = validationResult(req);
     if (!errors.isEmpty()) {
       return next(BadRequest("Ошибка валидации", errors.array()));
     }
 
-    const { username, password } = req.body;
+    const { username, password }: UserDataDto = req.body;
 
     const userData = await UserService.registration(username, password);
 
@@ -34,7 +36,7 @@ export async function registration(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
-    console.log(userData);
+    
     return res.json(userData);
   } catch (err) {
     next(err);
@@ -47,8 +49,8 @@ export async function login(
   next: NextFunction
 ): Promise<Response<any, Record<string, any>>> {
   try {
-    const { username, password } = req.body;
-    const userData = await UserService.login(username, password);
+    const { username, password }: UserDataDto = req.body;
+    const userData: AccessDataDto = await UserService.login(username, password);
     res.cookie("refreshToken", userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
@@ -66,8 +68,8 @@ export async function logout(
   next: NextFunction
 ): Promise<Response<any, Record<string, any>>> {
   try {
-    const { refreshToken } = req.cookies;
-    const token = await UserService.logout(refreshToken);
+    const { refreshToken }: { refreshToken: string } = req.cookies;
+    const token: string = await UserService.logout(refreshToken);
     res.clearCookie("refreshToken");
     return res.json(token);
   } catch (err) {
@@ -81,8 +83,8 @@ export async function refresh(
   next: NextFunction
 ): Promise<Response<any, Record<string, any>>> {
   try {
-    const {refreshToken} = req.cookies;
-    const userData = await UserService.refresh(refreshToken);
+    const { refreshToken }: { refreshToken: string } = req.cookies;
+    const userData: AccessDataDto = await UserService.refresh(refreshToken);
     res.cookie("refreshToken", userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,

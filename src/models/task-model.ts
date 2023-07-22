@@ -1,21 +1,7 @@
-import { ObjectId, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
+import { TaskDto } from "../dtos/task-dto";
 
-/**
- * {
-    user: ObjectId;
-    header: string;
-    content: string;
-    isDone: boolean;
-  }
- */
-interface ITask {
-  user: ObjectId;
-  header: string;
-  content: string;
-  isDone: boolean;
-}
-
-const taskSchema = new Schema<ITask>({
+const taskSchema = new Schema<TaskDto>({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   header: { type: String, required: true },
   content: { type: String, required: true },
@@ -23,8 +9,8 @@ const taskSchema = new Schema<ITask>({
 });
 
 /**
- * @implements {model<ITask>("Task", taskSchema)}
+ * @implements {model<TaskDto>("Task", taskSchema)}
  */
-const Task = model<ITask>("Task", taskSchema);
+const Task = model<TaskDto>("Task", taskSchema);
 
 export default Task;
