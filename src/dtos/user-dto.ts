@@ -1,24 +1,20 @@
 import { Types } from "mongoose";
 
-/**
- * {  
- *  username: string;  
- *  id: string  
- * }
- */
 export interface UserDto {
   username: string;
   id: string;
 }
 
 /**
- * Create new object implemented UserDto
- * @param user - {username: string, _id: Types.ObjectId}
- * @returns {UserDto} UserDto
+ * Create new UserDto
+ * @param {{username: string, _id: Types.ObjectId}} user
+ * @returns {UserDto}
  */
 export function newUserDto(user: {username: string, _id: Types.ObjectId}): UserDto {
-  return {
+  const userDto: UserDto = {
     username: user.username,
-    id: user._id.toString("hex")
+    id: user._id.toHexString()
   }
+
+  return userDto;
 }

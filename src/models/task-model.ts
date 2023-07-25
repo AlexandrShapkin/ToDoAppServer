@@ -1,5 +1,7 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 import { TaskDto } from "../dtos/task-dto";
+
+export type TaskMongooseDoc = mongoose.Document<unknown, {}, TaskDto> & TaskDto & { _id: Types.ObjectId }
 
 const taskSchema = new Schema<TaskDto>({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },

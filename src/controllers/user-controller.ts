@@ -10,18 +10,13 @@ import { AccessDataDto } from "../dtos/access-data-dto";
  * @param {Request} req express Request
  * @param {Response} res express Response
  * @param {NextFunction} next express NextFunction
- * @returns {Promise<Response<any, Record<string, any>>>} Response JSON
- * `{
- *    accessToken: string;
- *    refreshToken: string;
- *    userDto: UserDto;
- *  }`
+ * @returns Response JSON
  */
 export async function registration(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void | Response<any, Record<string, any>>> {
+) {
   try {
     const errors: Result<ValidationError> = validationResult(req);
     if (!errors.isEmpty()) {
@@ -43,6 +38,13 @@ export async function registration(
   }
 }
 
+/**
+ * Login endpoint handler
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ * @returns Response JSON
+ */
 export async function login(
   req: Request,
   res: Response,
@@ -62,11 +64,18 @@ export async function login(
   }
 }
 
+/**
+ * Logout endpoint handler
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ * @returns Response JSON
+ */
 export async function logout(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<Response<any, Record<string, any>>> {
+) {
   try {
     const { refreshToken }: { refreshToken: string } = req.cookies;
     const token: string = await UserService.logout(refreshToken);
@@ -77,11 +86,18 @@ export async function logout(
   }
 }
 
+/**
+ * Refresh access token endpoint handler
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ * @returns Response JSON
+ */
 export async function refresh(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<Response<any, Record<string, any>>> {
+) {
   try {
     const { refreshToken }: { refreshToken: string } = req.cookies;
     const userData: AccessDataDto = await UserService.refresh(refreshToken);

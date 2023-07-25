@@ -17,6 +17,12 @@ import { newUserDto, UserDto } from "../dtos/user-dto";
 import { AccessDataDto } from "../dtos/access-data-dto";
 import { BadRequest, UnauthorizedError } from "../errors/api-error";
 
+/**
+ * User registration service
+ * @param {string} username 
+ * @param {string} password 
+ * @returns {Promise<AccessDataDto>}
+ */
 export async function registration(
   username: string,
   password: string
@@ -46,6 +52,12 @@ export async function registration(
   };
 }
 
+/**
+ * User login service
+ * @param {string} username 
+ * @param {string} password 
+ * @returns {Promise<AccessDataDto>}
+ */
 export async function login(
   username: string,
   password: string
@@ -71,12 +83,22 @@ export async function login(
   };
 }
 
+/**
+ * User logout service
+ * @param {string} refreshToken 
+ * @returns {Promise<string>}
+ */
 export async function logout(refreshToken: string): Promise<string> {
   const { id } = decodeToken(refreshToken);
   const token: string = await removeToken(id);
   return token;
 }
 
+/**
+ * User refresh access data
+ * @param {string} refreshToken 
+ * @returns {Promise<AccessDataDto>}
+ */
 export async function refresh(
   refreshToken: string
 ): Promise<AccessDataDto> {

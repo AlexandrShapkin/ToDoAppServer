@@ -1,11 +1,7 @@
 import { ValidationError } from "express-validator";
 
 /**
- * {
-  status: number;
-  errors: Error[];
-}
-  @extends {Error}
+ * @extends {Error}
  */
 export interface ApiError extends Error {
   status: number;
@@ -55,10 +51,14 @@ export function BadRequest(message: string, errors: ValidationError[] = []): Api
   return err;
 }
 
+/**
+ * Task Update Error
+ * @returns {ApiError}
+ */
 export function UpdateError(): ApiError {
   const err: ApiError = {
     status: 500,
-    message: "Ошибка обноаления задачи",
+    message: "Ошибка обновления задачи",
     errors: [],
     name: "Task Update Error"
   };

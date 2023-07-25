@@ -2,6 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import { UnauthorizedError } from "../errors/api-error";
 import { verifyAccessToken, TokenPayload } from "../service/token-service";
 
+/**
+ * Authorization middleware
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ * @returns 
+ */
 export default function(req: Request, res: Response, next: NextFunction) {
   try {
     const authorizationHeader: string = req.headers.authorization;
