@@ -5,6 +5,10 @@ export interface TaskDto {
   header: string;
   content: string;
   isDone: boolean;
+  addTime: Date;
+  doneTime: Date;
+  deleteOnCompletion: boolean;
+  group: string[];
 }
 
 /**
@@ -19,13 +23,21 @@ export function newTaskDto(
   user: Types.ObjectId,
   header: string,
   content: string,
-  isDone: boolean
+  isDone: boolean,
+  addTime: Date = new Date(),
+  doneTime: Date = null,
+  deleteOnCompletion: boolean = false,
+  group: string[] = []
 ): TaskDto {
   const taskDto: TaskDto = {
     user: user,
     header: header,
     content: content,
-    isDone: isDone
+    isDone: isDone,
+    addTime: addTime,
+    doneTime: doneTime,
+    deleteOnCompletion: deleteOnCompletion,
+    group: group
   };
 
   return taskDto;

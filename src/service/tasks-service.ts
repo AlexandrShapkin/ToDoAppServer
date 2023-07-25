@@ -57,24 +57,30 @@ export async function updateTask(taskData: any): Promise<TaskMongooseDoc> {
     }
   );
 
+  if (newTask.deleteOnCompletion && newTask.isDone) {
+    await deleteTask(newTask._id);
+  }
+
   return newTask;
 }
 
 /**
  * Delete Task service
- * @param {Types.ObjectId} id 
- * @param {string} userId 
+ * @param {any} taskData 
  * @returns {Promise<TaskMongooseDoc>}
  */
 export async function deleteTask(
-  id: Types.ObjectId,
-  userId: string
+  taskData: any
 ): Promise<TaskMongooseDoc> {
-  const condidate: TaskMongooseDoc = await Task.findById(id);
-  if (condidate.user.toString("hex") != userId) {
-    throw BadRequest("Вы пытаетесь удалить задачу, которая вам не принадлежит");
+  const deletedTask: TaskMongooseDoc = await Task.findOneAndDelete({ _id: taskData._id });
+  return deletedTask;
+}
+
+export async function isTaskOwner(taskData: any, userData: UserDto): Promise<boolean> {
+  const condidate: TaskMongooseDoc = await Task.findOne({ _id: taskData._id });
+  if (condidate.user.toString("hex") != userData.id) {
+    return false;
   }
 
-  const deletedTask: TaskMongooseDoc = await Task.findOneAndDelete({ _id: id });
-  return deletedTask;
+  return true;
 }

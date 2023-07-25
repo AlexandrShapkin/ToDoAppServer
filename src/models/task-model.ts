@@ -8,6 +8,10 @@ const taskSchema = new Schema<TaskDto>({
   header: { type: String, required: true },
   content: { type: String, required: true },
   isDone: { type: Boolean, required: true },
+  addTime: { type: Date, required: true, default: Date.now},
+  doneTime: { type: Date, default: null },
+  deleteOnCompletion: { type: Boolean, default: false },
+  group: [{ type: String }]
 });
 
 /**

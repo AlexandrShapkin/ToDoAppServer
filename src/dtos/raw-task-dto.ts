@@ -1,6 +1,7 @@
 export interface RawTaskDto {
   header: string;
   content: string;
+  group: string[]
 }
 
 /**
@@ -9,10 +10,11 @@ export interface RawTaskDto {
  * @param {string} content
  * @returns {RawTaskDto}
  */
-export function newRawTaskDto(header: string, content: string): RawTaskDto {
+export function newRawTaskDto(header: string, content: string, group: string[] = []): RawTaskDto {
   const rawTaskDto: RawTaskDto = {
     header: header,
     content: content,
+    group: []
   };
 
   return rawTaskDto;

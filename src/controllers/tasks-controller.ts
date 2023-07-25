@@ -70,8 +70,8 @@ export async function updateTask(
     const taskData = req.body;
     const userData: UserDto = req.user;
 
-    if (userData.id != taskData.user.toString("hex")) {
-      return next(BadRequest("id хозяина заметки и ваш не совпадают"));
+    if (!await TasksService.isTaskOwner(taskData, userData)) {
+      return next(BadRequest("В доступе отказано! Вы не хозяин заметки"));
     }
 
     const newTask = await TasksService.updateTask(taskData);
@@ -94,9 +94,14 @@ export async function deleteTask(
   next: NextFunction
 ) {
   try {
-    const taskId = req.body.id;
-    const userId = req.user.id;
-    const deletedTask = await TasksService.deleteTask(taskId, userId);
+    const taskData = req.body;
+    const userData: UserDto = req.user;
+
+    if (!await TasksService.isTaskOwner(taskData, userData)) {
+      return next(BadRequest("В доступе отказано! Вы не хозяин заметки"));
+    }
+
+    const deletedTask = await TasksService.deleteTask(taskData);
     return res.json(deletedTask);
   } catch (err) {
     next(err);
