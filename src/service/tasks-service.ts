@@ -1,16 +1,15 @@
 import { RawTaskDto } from "../dtos/raw-task-dto";
 import { UserDto } from "../dtos/user-dto";
 import Task, { TaskMongooseDoc } from "../models/task-model";
-import mongoose, { Types } from "mongoose";
-import { BadRequest } from "../errors/api-error";
+import mongoose from "mongoose";
 
 /**
  * Add new Task service
- * @param {RawTaskDto} taskData 
- * @param {UserDto} userData 
+ * @param {RawTaskDto} taskData
+ * @param {UserDto} userData
  * @returns {Promise<TaskMongooseDoc>}
  */
-export async function addNewTask(
+export async function addTask(
   taskData: RawTaskDto,
   userData: UserDto
 ): Promise<TaskMongooseDoc> {
@@ -27,8 +26,8 @@ export async function addNewTask(
 
 /**
  * Get All Tasks service
- * @param {UserDto} userData 
- * @param {any} filter 
+ * @param {UserDto} userData
+ * @param {any} filter
  * @returns {Promise<TaskMongooseDoc>}
  */
 export async function getAllTasks(
@@ -45,7 +44,7 @@ export async function getAllTasks(
 
 /**
  * Update Task service
- * @param {any} taskData 
+ * @param {any} taskData
  * @returns {Promise<TaskMongooseDoc>}
  */
 export async function updateTask(taskData: any): Promise<TaskMongooseDoc> {
@@ -59,6 +58,9 @@ export async function updateTask(taskData: any): Promise<TaskMongooseDoc> {
 
   if (newTask.deleteOnCompletion && newTask.isDone) {
     await deleteTask(newTask._id);
+  } else if (newTask.isDone) {
+    newTask.doneTime = new Date();
+    newTask.save();
   }
 
   return newTask;
@@ -66,17 +68,26 @@ export async function updateTask(taskData: any): Promise<TaskMongooseDoc> {
 
 /**
  * Delete Task service
- * @param {any} taskData 
+ * @param {any} taskData
  * @returns {Promise<TaskMongooseDoc>}
  */
-export async function deleteTask(
-  taskData: any
-): Promise<TaskMongooseDoc> {
-  const deletedTask: TaskMongooseDoc = await Task.findOneAndDelete({ _id: taskData._id });
+export async function deleteTask(taskData: any): Promise<TaskMongooseDoc> {
+  const deletedTask: TaskMongooseDoc = await Task.findOneAndDelete({
+    _id: taskData._id,
+  });
   return deletedTask;
 }
 
-export async function isTaskOwner(taskData: any, userData: UserDto): Promise<boolean> {
+/**
+ * Check is user task owner
+ * @param {any} taskData 
+ * @param {UserDto} userData 
+ * @returns {Promise<boolean>}
+ */
+export async function isTaskOwner(
+  taskData: any,
+  userData: UserDto
+): Promise<boolean> {
   const condidate: TaskMongooseDoc = await Task.findOne({ _id: taskData._id });
   if (condidate.user.toString("hex") != userData.id) {
     return false;

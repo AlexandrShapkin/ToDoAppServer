@@ -3,14 +3,13 @@ import { RawTaskDto } from "../dtos/raw-task-dto";
 import { UserDto } from "../dtos/user-dto";
 import * as TasksService from "../service/tasks-service";
 import { TaskDto } from "../dtos/task-dto";
-import { Result, ValidationError, validationResult } from "express-validator";
 import { BadRequest } from "../errors/api-error";
 
 /**
  * Tasks GET handler
- * @param {Request} req 
- * @param {Response} res 
- * @param {NextFunction} next 
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns Response JSON
  */
 export async function getAllTasks(
@@ -29,25 +28,17 @@ export async function getAllTasks(
 }
 
 /**
- * Tasks POST handler
- * @param {Request} req 
- * @param {Response} res 
- * @param {NextFunction} next 
+ * Task POST handler
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns Response JSON
  */
-export async function addNewTask(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export async function addTask(req: Request, res: Response, next: NextFunction) {
   try {
-    const errors: Result<ValidationError> = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(BadRequest("Ошибка ввода данных", errors.array()));
-    }
     const taskData: RawTaskDto = req.body;
     const userData: UserDto = req.user;
-    const newTask: TaskDto = await TasksService.addNewTask(taskData, userData);
+    const newTask: TaskDto = await TasksService.addTask(taskData, userData);
     return res.json(newTask);
   } catch (err) {
     next(err);
@@ -55,10 +46,34 @@ export async function addNewTask(
 }
 
 /**
- * Tasks PUT handler
- * @param {Request} req 
- * @param {Response} res 
- * @param {NextFunction} next 
+ * Tasks POST handler
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns Response JSON
+ */
+export async function addTasks(req: Request, res: Response, next: NextFunction) {
+  try {
+    const tasksData: RawTaskDto[] = req.body;
+    const userData: UserDto = req.user;
+    let newTasks: TaskDto[] = [];
+
+    for (let taskData of tasksData) {
+      const newTask: TaskDto = await TasksService.addTask(taskData, userData);
+      newTasks.push(newTask);
+    }
+
+    return res.json(newTasks)
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Task PUT handler
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns Response JSON
  */
 export async function updateTask(
@@ -70,7 +85,7 @@ export async function updateTask(
     const taskData = req.body;
     const userData: UserDto = req.user;
 
-    if (!await TasksService.isTaskOwner(taskData, userData)) {
+    if (!(await TasksService.isTaskOwner(taskData, userData))) {
       return next(BadRequest("В доступе отказано! Вы не хозяин заметки"));
     }
 
@@ -82,10 +97,10 @@ export async function updateTask(
 }
 
 /**
- * Tasks DELETE handler
- * @param {Request} req 
- * @param {Response} res 
- * @param {NextFunction} next 
+ * Task DELETE handler
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns Response JSON
  */
 export async function deleteTask(
@@ -97,7 +112,7 @@ export async function deleteTask(
     const taskData = req.body;
     const userData: UserDto = req.user;
 
-    if (!await TasksService.isTaskOwner(taskData, userData)) {
+    if (!(await TasksService.isTaskOwner(taskData, userData))) {
       return next(BadRequest("В доступе отказано! Вы не хозяин заметки"));
     }
 
