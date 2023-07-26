@@ -89,7 +89,7 @@ export function decodeToken(token: string): TokenPayload {
  * @param {string} refreshToken 
  */
 export async function saveToken(userId: string, refreshToken: string) {
-  await RedisClient.set(userId, refreshToken);
+  await RedisClient.set(userId, refreshToken, {EX: 30 * 24 * 60 * 60});
 }
 
 /**

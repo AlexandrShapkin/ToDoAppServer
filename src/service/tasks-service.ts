@@ -58,9 +58,12 @@ export async function updateTask(taskData: any): Promise<TaskMongooseDoc> {
 
   if (newTask.deleteOnCompletion && newTask.isDone) {
     await deleteTask(newTask._id);
-  } else if (newTask.isDone) {
+  } else if (newTask.isDone && taskData?.isDone) {
     newTask.doneTime = new Date();
-    newTask.save();
+    await newTask.save();
+  } else if (!newTask.isDone && !taskData?.isDone) {
+    newTask.doneTime = null;
+    await newTask.save();
   }
 
   return newTask;
@@ -89,9 +92,9 @@ export async function isTaskOwner(
   userData: UserDto
 ): Promise<boolean> {
   const condidate: TaskMongooseDoc = await Task.findOne({ _id: taskData._id });
-  if (condidate.user.toString("hex") != userData.id) {
-    return false;
+  if (condidate?.user.toString("hex") == userData.id) {
+    return true;
   }
 
-  return true;
+  return false;
 }
