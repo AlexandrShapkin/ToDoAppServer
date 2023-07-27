@@ -3,8 +3,19 @@ import { connect } from "mongoose";
 import cookieParser from "cookie-parser";
 import { router } from "./router/router";
 import ErrorMiddleware from "./middlewares/error-middleware";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // database envs
+/**
+ * Database connection username. Get from ENV.
+ */
+const DB_USER = process.env.DB_USER;
+/**
+ * Database connection password. Get from ENV.
+ */
+const DB_PASSWORD = process.env.DB_PASSWORD;
 /**
  * Database connection address. Get from ENV. `localhost` - by default
  */
@@ -32,7 +43,7 @@ app.use("/api", router);
 app.use(ErrorMiddleware);
 
 async function run() {
-  connect(`mongodb://${DB_ADDRESS}:${DB_PORT}/${DB_NAME}`).catch((error) =>
+  connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_ADDRESS}:${DB_PORT}/${DB_NAME}`).catch((error) =>
     console.log(error)
   );
 

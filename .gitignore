@@ -1,9 +1,8 @@
 # Database data
 data
 
-# Docker
-Dockerfile
-docker-compose.yml
+# Redis conf
+redis.conf
 
 # Logs
 logs

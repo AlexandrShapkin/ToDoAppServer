@@ -1,0 +1,4 @@
+.env
+redis.conf
+node_modules
+data

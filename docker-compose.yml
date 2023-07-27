@@ -1,0 +1,41 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    command: [--auth]
+    volumes:
+      - ./data/mongo:/data/db
+    networks:
+      - node-network
+  
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    command: redis-server /redis.conf
+    volumes:
+      - ./data/redis:/data
+      - ./redis.conf:/redis.conf
+    networks:
+      - node-network
+
+  app:
+    build: .
+    image: alexandrshapkin/todoapp
+    ports:
+      - 3000:3000
+    environment:
+      - DB_ADDRESS=mongo
+      - REDIS_ADDRESS=redis
+    volumes:
+      - ./.env:/usr/src/app/.env
+    networks:
+      - node-network
+    depends_on:
+      - mongo
+      - redis
+
+networks:
+  node-network:
+    driver: bridge
