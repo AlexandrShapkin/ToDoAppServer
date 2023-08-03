@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { router } from "./router/router";
 import ErrorMiddleware from "./middlewares/error-middleware";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ const app: express.Express = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 app.use("/api", router);
 app.use(ErrorMiddleware);
 
