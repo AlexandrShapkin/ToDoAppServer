@@ -35,12 +35,19 @@ const DB_NAME = process.env.DB_NAME || "ToDoApp";
  * Server listen port. Get from ENV. `3000` - by default
  */
 const PORT = process.env.PORT || 3000;
+/**
+ * Client url. Uses for cors origin. Get from ENV.
+ */
+const CLIENT_URL = process.env.CLIENT_URL;
 
 const app: express.Express = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: CLIENT_URL
+}));
 app.use("/api", router);
 app.use(ErrorMiddleware);
 

@@ -64,7 +64,7 @@ export async function login(
 ): Promise<AccessDataDto> {
   const user = await User.findOne({ username: username });
   if (!user) {
-    throw BadRequest("Пользователь не найден");
+    throw BadRequest(`Пользователь ${username} не найден`);
   }
 
   const isMatch: boolean = isMatchPassword(password, user.password);
