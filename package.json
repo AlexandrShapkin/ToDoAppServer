@@ -10,7 +10,9 @@
   "main": "dist/app.js",
   "private": true,
   "scripts": {
-    "start": "tsc && node dist/app.js"
+    "dev": "tsc && node dist/app.js",
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "keywords": [
     "todo"
