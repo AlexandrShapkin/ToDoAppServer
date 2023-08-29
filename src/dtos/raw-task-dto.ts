@@ -1,4 +1,5 @@
 export interface RawTaskDto {
+  _id?: string;
   header: string;
   content: string;
   group: string[]

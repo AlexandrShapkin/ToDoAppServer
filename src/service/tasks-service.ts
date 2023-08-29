@@ -15,6 +15,7 @@ export async function addTask(
 ): Promise<TaskMongooseDoc> {
   const userId: mongoose.mongo.BSON.ObjectId =
     mongoose.Types.ObjectId.createFromHexString(userData.id);
+  delete taskData["_id"];
   const newTask: TaskMongooseDoc = await Task.create({
     user: userId,
     isDone: false,
