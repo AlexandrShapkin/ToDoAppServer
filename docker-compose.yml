@@ -22,7 +22,7 @@ services:
 
   app:
     build: .
-    image: alexandrshapkin/todoapp
+    image: alexandrshapkin/todoapp-server
     ports:
       - 3000:3000
     environment:
