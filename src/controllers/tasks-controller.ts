@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { RawTaskDto } from "../dtos/raw-task-dto";
+import { RawTaskDto, RawTaskFrom } from "../dtos/raw-task-dto";
 import { UserDto } from "../dtos/user-dto";
 import * as TasksService from "../service/tasks-service";
 import { TaskDto } from "../dtos/task-dto";
@@ -36,9 +36,10 @@ export async function getAllTasks(
  */
 export async function addTask(req: Request, res: Response, next: NextFunction) {
   try {
-    const taskData: RawTaskDto = req.body;
+    const taskData: TaskDto = req.body;
+    const rawTaskData: RawTaskDto = RawTaskFrom(taskData);
     const userData: UserDto = req.user;
-    const newTask: TaskDto = await TasksService.addTask(taskData, userData);
+    const newTask: TaskDto = await TasksService.addTask(rawTaskData, userData);
     return res.json(newTask);
   } catch (err) {
     next(err);
@@ -52,18 +53,24 @@ export async function addTask(req: Request, res: Response, next: NextFunction) {
  * @param {NextFunction} next
  * @returns Response JSON
  */
-export async function addTasks(req: Request, res: Response, next: NextFunction) {
+export async function addTasks(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const tasksData: RawTaskDto[] = req.body;
+    const tasksData: TaskDto[] = req.body;
+    const rawTasksData: RawTaskDto[] = tasksData.map((task) =>
+      RawTaskFrom(task)
+    );
     const userData: UserDto = req.user;
-    let newTasks: TaskDto[] = [];
+    let newTasks: TaskDto[] = await Promise.all(
+      rawTasksData.map(
+        async (rawTask) => await TasksService.addTask(rawTask, userData)
+      )
+    );
 
-    for (let taskData of tasksData) {
-      const newTask: TaskDto = await TasksService.addTask(taskData, userData);
-      newTasks.push(newTask);
-    }
-
-    return res.json(newTasks)
+    return res.json(newTasks);
   } catch (err) {
     next(err);
   }
